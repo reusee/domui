@@ -9,7 +9,7 @@ import (
 	"github.com/reusee/dscope"
 )
 
-type Root Spec
+type RootElement Spec
 
 type App struct {
 	wrapElement js.Value
@@ -114,7 +114,7 @@ func (a *App) ScopedCall(fn any) {
 	s.Call(fn)
 }
 
-var rootType = reflect.TypeOf((*Root)(nil)).Elem()
+var rootElementType = reflect.TypeOf((*RootElement)(nil)).Elem()
 
 func (a *App) Render() {
 	t0 := time.Now()
@@ -125,7 +125,7 @@ func (a *App) Render() {
 		}
 	}()
 	a.ScopedCall(func(scope Scope) {
-		v, err := scope.Get(rootType)
+		v, err := scope.Get(rootElementType)
 		ce(err)
 		newNode := v.Interface().(*Node)
 		a.element, err = Patch(scope, newNode, a.element, a.rootNode)

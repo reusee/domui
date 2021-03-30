@@ -2,6 +2,12 @@ package domui
 
 import "syscall/js"
 
+func MakeTagFunc(tag string) func(...Spec) *Node {
+	return func(specs ...Spec) *Node {
+		return Tag(tag, specs...)
+	}
+}
+
 func Tag(tag string, specs ...Spec) *Node {
 	node := &Node{
 		Kind: TagNode,
@@ -52,20 +58,3 @@ func Tag(tag string, specs ...Spec) *Node {
 
 	return node
 }
-
-func MakeTagFunc(tag string) func(...Spec) *Node {
-	return func(specs ...Spec) *Node {
-		return Tag(tag, specs...)
-	}
-}
-
-var (
-	Div    = MakeTagFunc("div")
-	Button = MakeTagFunc("button")
-	P      = MakeTagFunc("p")
-	Span   = MakeTagFunc("span")
-	Select = MakeTagFunc("select")
-	Option = MakeTagFunc("option")
-	Label  = MakeTagFunc("label")
-	Input  = MakeTagFunc("input")
-)
