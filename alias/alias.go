@@ -3,8 +3,9 @@ package alias
 import "github.com/reusee/domui"
 
 type (
-	any       = interface{}
-	EventSpec = domui.EventSpec
-	Spec      = domui.Spec
-	Node      = domui.Node
+	any        = interface{}
+	EventSpec  = domui.EventSpec
+	Spec       = domui.Spec
+	Node       = domui.Node
+	StylesSpec = domui.StylesSpec
 )
