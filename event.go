@@ -24,7 +24,7 @@ func On(ev string, fn any) EventSpec {
 	}
 }
 
-func MakeEventFunc(event string) func(fn func()) EventSpec {
+func makeEventFunc(event string) func(fn func()) EventSpec {
 	return func(fn func()) EventSpec {
 		return On(event, fn)
 	}

@@ -1,12 +1,10 @@
-package alias
-
-import "github.com/reusee/domui"
+package domui
 
 // https://developer.mozilla.org/en-US/docs/Web/CSS/Reference
 
 func makeStyleFunc(name string) func(value any) StylesSpec {
 	return func(value any) StylesSpec {
-		return domui.CSS(name, value)
+		return CSS(name, value)
 	}
 }
 

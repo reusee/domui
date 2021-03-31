@@ -1,12 +1,10 @@
-package alias
-
-import "github.com/reusee/domui"
+package domui
 
 // https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes
 
-func makeAttrFunc(name string) func(value any) domui.AttrsSpec {
-	return func(value any) domui.AttrsSpec {
-		return domui.AttrsSpec{
+func makeAttrFunc(name string) func(value any) AttrsSpec {
+	return func(value any) AttrsSpec {
+		return AttrsSpec{
 			Attrs: map[string]any{
 				name: value,
 			},

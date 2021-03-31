@@ -2,7 +2,7 @@ package domui
 
 import "syscall/js"
 
-func MakeTagFunc(tag string) func(...Spec) *Node {
+func makeTagFunc(tag string) func(...Spec) *Node {
 	return func(specs ...Spec) *Node {
 		return Tag(tag, specs...)
 	}
