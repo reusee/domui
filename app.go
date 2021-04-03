@@ -11,6 +11,8 @@ import (
 
 type RootElement Spec
 
+type RenderElement js.Value
+
 type App struct {
 	wrapElement js.Value
 	element     js.Value
@@ -22,21 +24,12 @@ type App struct {
 }
 
 func NewApp(
-	parentElement js.Value,
-	initDecls ...any,
+	defObjects ...any,
 ) *App {
 
-	parentElement.Set("innerHTML", "")
-	wrap := Document.Call("createElement", "div")
-	parentElement.Call("appendChild", wrap)
-	element := Document.Call("createElement", "div")
-	wrap.Call("appendChild", element)
-
 	app := &App{
-		wrapElement: wrap,
-		element:     element,
-		dirty:       make(chan struct{}, 1),
-		fns:         make(chan any),
+		dirty: make(chan struct{}, 1),
+		fns:   make(chan any),
 	}
 
 	scope := dscope.New(
@@ -53,14 +46,25 @@ func NewApp(
 	app.scope = scope
 
 	defs := dscope.Methods(new(Def))
-	defs = append(defs, initDecls...)
+	for _, obj := range defObjects {
+		defs = append(defs, dscope.Methods(obj))
+	}
 	app.scope = app.scope.Sub(defs...)
 
-	app.scope.Call(func(
-		onInit OnAppInit,
-	) {
-		onInit()
-	})
+	var onInit OnAppInit
+	var renderElement RenderElement
+	app.scope.Assign(&onInit, &renderElement)
+
+	onInit()
+
+	parentElement := js.Value(renderElement)
+	parentElement.Set("innerHTML", "")
+	wrap := Document.Call("createElement", "div")
+	parentElement.Call("appendChild", wrap)
+	element := Document.Call("createElement", "div")
+	wrap.Call("appendChild", element)
+	app.wrapElement = wrap
+	app.element = element
 
 	go func() {
 		for {
