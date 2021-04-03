@@ -47,7 +47,7 @@ func NewApp(
 
 	defs := dscope.Methods(new(Def))
 	for _, obj := range defObjects {
-		defs = append(defs, dscope.Methods(obj))
+		defs = append(defs, dscope.Methods(obj)...)
 	}
 	app.scope = app.scope.Sub(defs...)
 
