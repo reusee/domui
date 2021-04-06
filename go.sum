@@ -1,5 +1,7 @@
 github.com/reusee/dscope v0.0.0-20210321165107-dffa5008ee10 h1:uHF+Pv2k8IJxyTlb91cpsVcVKysDoifd+WkLr2uZ6U8=
 github.com/reusee/dscope v0.0.0-20210321165107-dffa5008ee10/go.mod h1:VKlvkUcHsW9T2FVIA/oGFDlk3hBKZUICZVb1DewhbX4=
+github.com/reusee/dscope v0.0.0-20210406042911-7228063ab887 h1:POTEbBIaMc68lkc7TU8g3uDnVcEtyUMrPEsFNIYgvfQ=
+github.com/reusee/dscope v0.0.0-20210406042911-7228063ab887/go.mod h1:VKlvkUcHsW9T2FVIA/oGFDlk3hBKZUICZVb1DewhbX4=
 github.com/reusee/e4 v0.0.0-20210220140921-dc464f80154d/go.mod h1:Zfo0mBaNabtnbCtT4+HG9734x9G1VDT3Dwrqhp4wMfE=
 github.com/reusee/e4 v0.0.0-20210323110558-8674a57b4717 h1:oAErEznMiqQfcb8wxDZRFN6C9DXSBjxo6/AhaJLixfs=
 github.com/reusee/e4 v0.0.0-20210323110558-8674a57b4717/go.mod h1:Zfo0mBaNabtnbCtT4+HG9734x9G1VDT3Dwrqhp4wMfE=

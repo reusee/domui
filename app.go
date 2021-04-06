@@ -2,7 +2,6 @@ package domui
 
 import (
 	"reflect"
-	"sync"
 	"syscall/js"
 	"time"
 
@@ -16,8 +15,8 @@ type RenderElement js.Value
 type App struct {
 	wrapElement js.Value
 	element     js.Value
-	scopeLock   sync.RWMutex
-	scope       Scope
+	getScope    dscope.Get
+	derive      dscope.Derive
 	dirty       chan struct{}
 	rootNode    *Node
 	fns         chan any
@@ -32,28 +31,25 @@ func NewApp(
 		fns:   make(chan any),
 	}
 
-	scope := dscope.New(
+	scope := dscope.NewDeriving(
 		func() Update {
 			return app.Update
-		},
-		func() ScopedCall {
-			return app.ScopedCall
 		},
 		func() *App {
 			return app
 		},
 	)
-	app.scope = scope
+	scope.Assign(&app.getScope, &app.derive)
 
 	defs := dscope.Methods(new(Def))
 	for _, obj := range defObjects {
 		defs = append(defs, dscope.Methods(obj)...)
 	}
-	app.scope = app.scope.Sub(defs...)
+	app.derive(defs...)
 
 	var onInit OnAppInit
 	var renderElement RenderElement
-	app.scope.Assign(&onInit, &renderElement)
+	app.getScope().Assign(&onInit, &renderElement)
 
 	onInit()
 
@@ -74,7 +70,7 @@ func NewApp(
 				app.Render()
 
 			case fn := <-app.fns:
-				app.ScopedCall(fn)
+				app.getScope().Call(fn)
 
 			}
 		}
@@ -98,24 +94,12 @@ func (_ Def) OnAppInit() OnAppInit {
 }
 
 func (a *App) Update(decls ...any) Scope {
-	a.scopeLock.Lock()
-	defer a.scopeLock.Unlock()
-	if len(decls) == 0 {
-		return a.scope
-	}
-	a.scope = a.scope.Sub(decls...)
+	scope := a.derive(decls...)
 	select {
 	case a.dirty <- struct{}{}:
 	default:
 	}
-	return a.scope
-}
-
-func (a *App) ScopedCall(fn any) {
-	a.scopeLock.RLock()
-	s := a.scope
-	a.scopeLock.RUnlock()
-	s.Call(fn)
+	return scope
 }
 
 var rootElementType = reflect.TypeOf((*RootElement)(nil)).Elem()
@@ -128,14 +112,13 @@ func (a *App) Render() {
 			log("slow render in %v", time.Since(t0))
 		}
 	}()
-	a.ScopedCall(func(scope Scope) {
-		v, err := scope.Get(rootElementType)
-		ce(err)
-		newNode := v.Interface().(*Node)
-		a.element, err = patch(scope, newNode, a.element, a.rootNode)
-		ce(err)
-		a.rootNode = newNode
-	})
+	scope := a.getScope()
+	v, err := scope.Get(rootElementType)
+	ce(err)
+	newNode := v.Interface().(*Node)
+	a.element, err = patch(scope, newNode, a.element, a.rootNode)
+	ce(err)
+	a.rootNode = newNode
 }
 
 func (a *App) HTML() string {
