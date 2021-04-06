@@ -59,9 +59,9 @@ func NewApp(
 
 	parentElement := js.Value(renderElement)
 	parentElement.Set("innerHTML", "")
-	wrap := Document.Call("createElement", "div")
+	wrap := document.Call("createElement", "div")
 	parentElement.Call("appendChild", wrap)
-	element := Document.Call("createElement", "div")
+	element := document.Call("createElement", "div")
 	wrap.Call("appendChild", element)
 	app.wrapElement = wrap
 	app.element = element
@@ -139,7 +139,7 @@ func (a *App) Render() {
 }
 
 func (a *App) HTML() string {
-	if a.element.InstanceOf(HTMLElement) {
+	if a.element.InstanceOf(htmlElement) {
 		return a.element.Get("outerHTML").String()
 	}
 	return a.element.Get("nodeValue").String()

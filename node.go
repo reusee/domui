@@ -35,14 +35,14 @@ func (n *Node) ToElement(scope Scope) (_ js.Value, err error) {
 	switch n.Kind {
 
 	case TagNode:
-		element := Document.Call(
+		element := document.Call(
 			"createElement",
 			n.Text,
 		)
 
 		// child nodes may contain specs, handle first
 		if len(n.childNodes) > 0 {
-			fragment := Document.Call("createDocumentFragment")
+			fragment := document.Call("createDocumentFragment")
 			for _, childNode := range n.childNodes {
 				childElement, err := childNode.ToElement(scope)
 				ce(err)
@@ -94,7 +94,7 @@ func (n *Node) ToElement(scope Scope) (_ js.Value, err error) {
 		return element, nil
 
 	case TextNode:
-		element := Document.Call(
+		element := document.Call(
 			"createTextNode",
 			n.Text,
 		)

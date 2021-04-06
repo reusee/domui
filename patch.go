@@ -77,7 +77,7 @@ func Patch(
 	childNodes := node.childNodes
 	lastChildNodes := lastNode.childNodes
 	hasFocus := false
-	for node := Document.Get("activeElement"); !node.IsNull() && !node.IsUndefined() && !node.Equal(Body); node = node.Get("parentNode") {
+	for node := document.Get("activeElement"); !node.IsNull() && !node.IsUndefined() && !node.Equal(body); node = node.Get("parentNode") {
 		if node.Equal(element) {
 			hasFocus = true
 			break
@@ -88,7 +88,7 @@ func Patch(
 
 			childElement := elementChildren.Index(i)
 			hasScrollBar := false
-			if childElement.InstanceOf(HTMLElement) {
+			if childElement.InstanceOf(htmlElement) {
 				hasScrollBar = hasScrollBar ||
 					childElement.Get("scrollWidth").Int() > childElement.Get("clientWidth").Int()
 				hasScrollBar = hasScrollBar ||
