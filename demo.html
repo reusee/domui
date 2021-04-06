@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <script src="wasm_exec.js"></script>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script>
+
+      (async function exec() {
+        const go = new Go();
+        const result = await WebAssembly.instantiateStreaming(fetch("demo.wasm"), go.importObject);
+        await go.run(result.instance);
+      })()
+
+    </script>
+  </body>
+</html>
+
