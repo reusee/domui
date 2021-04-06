@@ -84,11 +84,6 @@ func setEventSpecs(wrap js.Value, element js.Value, specs map[string][]EventSpec
 									func() js.Value {
 										return node
 									},
-									func(node js.Value) AttrChecked {
-										return AttrChecked(
-											node.Get("checked").Bool(),
-										)
-									},
 								).Call(spec.Func)
 							}
 							if !bubbles {

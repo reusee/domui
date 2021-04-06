@@ -5,7 +5,7 @@ import (
 	"syscall/js"
 )
 
-func Patch(
+func patch(
 	scope Scope,
 	node *Node,
 	lastElement js.Value,
@@ -112,7 +112,7 @@ func Patch(
 
 			} else {
 				// replace
-				_, err := Patch(
+				_, err := patch(
 					scope,
 					childNode,
 					childElement,

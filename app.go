@@ -132,7 +132,7 @@ func (a *App) Render() {
 		v, err := scope.Get(rootElementType)
 		ce(err)
 		newNode := v.Interface().(*Node)
-		a.element, err = Patch(scope, newNode, a.element, a.rootNode)
+		a.element, err = patch(scope, newNode, a.element, a.rootNode)
 		ce(err)
 		a.rootNode = newNode
 	})
