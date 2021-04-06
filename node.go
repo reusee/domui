@@ -6,15 +6,15 @@ import (
 	"syscall/js"
 )
 
-type Kind uint8
+type NodeKind uint8
 
 const (
-	TagNode Kind = iota
+	TagNode NodeKind = iota
 	TextNode
 )
 
 type Node struct {
-	Kind       Kind
+	Kind       NodeKind
 	Text       string
 	ID         string
 	Style      string
