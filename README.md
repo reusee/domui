@@ -1,14 +1,14 @@
 domui: frontend framework for Go
 
-### Features
+## Features
 
 * pure go code compiled to wasm
 * unified view declaration and state management
 * reactive view and state transition
 
-### Usage
+## Usage
 
-#### Minimal demo
+### Minimal demo
 
 ```go
 // demo.go
@@ -96,3 +96,38 @@ func main() {
 
 Then open `http://localhost:46789/demo.html` in browser 
 
+### A counter element
+
+```go
+
+type Num int
+
+func (_ Def) Num() Num {
+	return 0
+}
+
+type CounterElement domui.Spec
+
+func (_ Def) CounterElement(
+	num Num,
+	update Update,
+) CounterElement {
+	return Tbutton(
+
+		// style
+		Sfont_size("2rem"),
+		Scursor("pointer"),
+
+		// text
+		S("%d", num),
+
+		// event
+		Eclick(func() {
+			num++
+			update(&num)
+		}),
+	)
+}
+
+
+```
