@@ -2,13 +2,17 @@ package domui
 
 import "fmt"
 
-func Text(text string) *Node {
+func Text(format string, args ...any) *Node {
+	if len(args) == 0 {
+		return &Node{
+			Kind: TextNode,
+			Text: format,
+		}
+	}
 	return &Node{
 		Kind: TextNode,
-		Text: text,
+		Text: fmt.Sprintf(format, args...),
 	}
 }
 
-func S(format string, args ...any) *Node {
-	return Text(fmt.Sprintf(format, args...))
-}
+var S = Text
