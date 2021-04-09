@@ -115,8 +115,11 @@ func (node *Node) ApplySpec(spec Spec) {
 	case IDSpec:
 		node.ID = spec.Value
 
+	case StyleString:
+		node.Style = string(spec)
+
 	case StyleSpec:
-		node.Style = spec.Value
+		node.Styles.Set(spec.Name, spec.Value)
 
 	case StylesSpec:
 		for k, v := range spec.Styles {
@@ -132,6 +135,9 @@ func (node *Node) ApplySpec(spec Spec) {
 		for k, v := range spec.Attrs {
 			node.Attributes.Set(k, v)
 		}
+
+	case AttrSpec:
+		node.Attributes.Set(spec.Name, spec.Value)
 
 	case EventSpec:
 		if node.Events == nil {

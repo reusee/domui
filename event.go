@@ -17,16 +17,12 @@ type EventSpec struct {
 
 func (_ EventSpec) IsSpec() {}
 
-func On(ev string, fn any) EventSpec {
-	return EventSpec{
-		Event: ev,
-		Func:  fn,
-	}
-}
-
-func makeEventFunc(event string) func(fn func()) EventSpec {
-	return func(fn func()) EventSpec {
-		return On(event, fn)
+func On(ev string) func(cb any) EventSpec {
+	return func(cb any) EventSpec {
+		return EventSpec{
+			Event: ev,
+			Func:  cb,
+		}
 	}
 }
 

@@ -1,16 +1,22 @@
 package domui
 
 import (
-	"fmt"
 	"reflect"
-	"strings"
 )
 
 type Spec interface {
 	IsSpec()
 }
 
-// utils
+// combinators
+
+type Specs []Spec
+
+func (_ Specs) IsSpec() {}
+
+type Lazy func() Spec
+
+func (_ Lazy) IsSpec() {}
 
 func If(cond bool, specs ...Spec) Spec {
 	if cond {
@@ -72,38 +78,6 @@ func ID(id string) IDSpec {
 	}
 }
 
-type StyleSpec struct {
-	Value string
-}
-
-func (_ StyleSpec) IsSpec() {}
-
-func Style(value string) StyleSpec {
-	return StyleSpec{
-		Value: strings.TrimSpace(value),
-	}
-}
-
-type StylesSpec struct {
-	Styles map[string]string
-}
-
-func (_ StylesSpec) IsSpec() {}
-
-func Styles(args ...any) StylesSpec {
-	m := make(map[string]string)
-	for i := 0; i < len(args); i += 2 {
-		k := args[i].(string)
-		v := fmt.Sprintf("%v", args[i+1])
-		m[k] = v
-	}
-	return StylesSpec{
-		Styles: m,
-	}
-}
-
-var CSS = Styles
-
 type ClassesSpec struct {
 	Classes map[string]bool
 }
@@ -122,36 +96,8 @@ func Classes(names ...string) ClassesSpec {
 
 var Class = Classes
 
-type AttrsSpec struct {
-	Attrs map[string]any
-}
-
-func (_ AttrsSpec) IsSpec() {}
-
-func Attrs(args ...any) AttrsSpec {
-	m := make(map[string]any)
-	for i := 0; i < len(args); i += 2 {
-		k := args[i].(string)
-		v := args[i+1]
-		m[k] = v
-	}
-	return AttrsSpec{
-		Attrs: m,
-	}
-}
-
-var Attr = Attrs
-
-type Specs []Spec
-
-func (_ Specs) IsSpec() {}
-
 type FocusSpec struct{}
 
 func (_ FocusSpec) IsSpec() {}
 
 var Focus = FocusSpec{}
-
-type Lazy func() Spec
-
-func (_ Lazy) IsSpec() {}

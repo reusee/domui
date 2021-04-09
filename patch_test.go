@@ -26,7 +26,7 @@ func TestPatch(t *testing.T) {
 			func() string {
 				return "foo"
 			},
-			func(s string) Root {
+			func(s string) RootElement {
 				if s == "foo" {
 					return Div()
 				}
@@ -55,7 +55,7 @@ func TestPatch(t *testing.T) {
 			func() string {
 				return "foo"
 			},
-			func(s string) Root {
+			func(s string) RootElement {
 				if s == "foo" {
 					return Div()
 				}
@@ -94,25 +94,25 @@ func TestPatch(t *testing.T) {
 			func() (string, int) {
 				return "foo", 42
 			},
-			func(s string, i int) Root {
+			func(s string, i int) RootElement {
 				if i == 3 {
 					return Div()
 				}
 
 				return Div(
 					ID(s),
-					Style(sp(`font-size: %dpx`, i)),
+					FontSize(sp("%dpx", i)),
 					Styles(
 						"font-weight", i,
 					),
 					Class(s),
-					Attr(s, s),
+					Attrs(s, s),
 
 					If(
 						i == 2,
 						Styles("display", "block"),
 						Class("qux"),
-						Attr("attr2", s),
+						Attrs("attr2", s),
 					),
 				)
 			},
@@ -174,12 +174,12 @@ func TestPatch(t *testing.T) {
 					t.Fatal()
 				}
 			},
-			func(i int) Root {
+			func(i int) RootElement {
 				if i == 4 {
 					return Div()
 				}
 				return Div(
-					On("click", func() {
+					OnClick(func() {
 						m[i]++
 					}),
 				)
@@ -245,7 +245,7 @@ func TestPatch(t *testing.T) {
 				}
 
 			},
-			func(n int) Root {
+			func(n int) RootElement {
 				var children Specs
 				for i := 0; i < n; i++ {
 					children = append(children, P(Text(sp("%d", i))))
