@@ -43,6 +43,7 @@ func NewApp(
 	scope.Assign(&app.getScope, &app.derive)
 
 	defs := dscope.Methods(new(Def))
+	defs = append(defs, dscope.Methods(defObject)...)
 	defs = append(defs, extraDefs...)
 	app.derive(defs...)
 
