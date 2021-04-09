@@ -9,46 +9,57 @@ import (
 	"github.com/reusee/domui"
 )
 
+// Def is a type to hold all element and state definitions
 type Def struct{}
 
+// RootElement is the element to be rendered to RenderElement
 func (_ Def) RootElement(
+	// use CounterElement as depenency
 	counter CounterElement,
 ) domui.RootElement {
-	return domui.Tdiv(
-		domui.S("hello, world!"),
+	return Div(
+		P(
+			S("hello, world!"),
+		),
 		counter,
 	)
 }
 
+// Num is an integer state
 type Num int
 
+// Num initial value
 func (_ Def) Num() Num {
 	return 0
 }
 
+// CounterElement is a button displaying and mutating Num
 type CounterElement domui.Spec
 
 func (_ Def) CounterElement(
+	// use Num as depenency
 	num Num,
+	// use Update function
 	update Update,
 ) CounterElement {
-	return Tbutton(
+	return Button(
 
-		// style
-		Sfont_size("2rem"),
-		Scursor("pointer"),
-
-		// text
+		// label
 		S("%d", num),
 
-		// event
-		Eclick(func() {
+		// style
+		FontSize("%.2frem", float64(num)*0.5+1),
+		Color("#09C"),
+
+		// increase Num on click
+		OnClick(func() {
 			num++
 			update(&num)
 		}),
 	)
 }
 
+// RenderElement is the HTMLElement to render on
 func (_ Def) RenderElement() domui.RenderElement {
 	return domui.RenderElement(
 		js.Global().Get("document").Call("getElementById", "app"),
@@ -60,13 +71,15 @@ func main() {
 	time.Sleep(time.Hour * 24 * 365 * 200)
 }
 
+// aliases
 var (
-	S          = domui.S
-	Tdiv       = domui.Tdiv
-	Tbutton    = domui.Tbutton
-	Eclick     = domui.Eclick
-	Sfont_size = domui.Sfont_size
-	Scursor    = domui.Scursor
+	Div      = domui.Tag("div")
+	P        = domui.Tag("p")
+	S        = domui.S
+	Button   = domui.Tag("button")
+	OnClick  = domui.On("click")
+	FontSize = domui.Style("font-size")
+	Color    = domui.Style("color")
 )
 
 type (
