@@ -35,11 +35,11 @@ type StyleSpec struct {
 
 func (_ StyleSpec) IsSpec() {}
 
-func Style(name string) func(value any) StyleSpec {
-	return func(value any) StyleSpec {
+func Style(name string) func(format string, args ...any) StyleSpec {
+	return func(format string, args ...any) StyleSpec {
 		return StyleSpec{
 			Name:  name,
-			Value: fmt.Sprintf("%v", value),
+			Value: fmt.Sprintf(format, args...),
 		}
 	}
 }
