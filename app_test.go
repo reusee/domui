@@ -13,7 +13,6 @@ func WithTestApp(t *testing.T, fn func(*App), defs ...any) {
 		return RenderElement(element)
 	})
 	app := NewApp(
-		nil,
 		defs...,
 	)
 	fn(app)

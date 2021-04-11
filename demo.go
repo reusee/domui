@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/reusee/domui"
+	"github.com/reusee/dscope"
 )
 
 // Def is a type to hold all element and state definitions
@@ -67,7 +68,7 @@ func (_ Def) RenderElement() domui.RenderElement {
 }
 
 func main() {
-	domui.NewApp(new(Def))
+	domui.NewApp(dscope.Methods(new(Def))...)
 	time.Sleep(time.Hour * 24 * 365 * 200)
 }
 

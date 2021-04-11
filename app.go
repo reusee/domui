@@ -23,8 +23,7 @@ type App struct {
 }
 
 func NewApp(
-	defObject any,
-	extraDefs ...any,
+	defs ...any,
 ) *App {
 
 	app := &App{
@@ -42,9 +41,7 @@ func NewApp(
 	)
 	scope.Assign(&app.getScope, &app.derive)
 
-	defs := dscope.Methods(new(Def))
-	defs = append(defs, dscope.Methods(defObject)...)
-	defs = append(defs, extraDefs...)
+	defs = append(defs, dscope.Methods(new(Def))...)
 	app.derive(defs...)
 
 	var onInit OnAppInit

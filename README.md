@@ -16,6 +16,7 @@ import (
 	"syscall/js"
 	"time"
 
+	"github.com/reusee/dscope"
 	"github.com/reusee/domui"
 )
 
@@ -77,7 +78,7 @@ func (_ Def) RenderElement() domui.RenderElement {
 }
 
 func main() {
-	domui.NewApp(new(Def))
+	domui.NewApp(dscope.Methods(new(Def))...)
 	time.Sleep(time.Hour * 24 * 365 * 200)
 }
 
