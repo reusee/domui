@@ -1,11 +1,11 @@
-github.com/reusee/dscope v0.0.0-20210321165107-dffa5008ee10 h1:uHF+Pv2k8IJxyTlb91cpsVcVKysDoifd+WkLr2uZ6U8=
-github.com/reusee/dscope v0.0.0-20210321165107-dffa5008ee10/go.mod h1:VKlvkUcHsW9T2FVIA/oGFDlk3hBKZUICZVb1DewhbX4=
-github.com/reusee/dscope v0.0.0-20210406042911-7228063ab887 h1:POTEbBIaMc68lkc7TU8g3uDnVcEtyUMrPEsFNIYgvfQ=
-github.com/reusee/dscope v0.0.0-20210406042911-7228063ab887/go.mod h1:VKlvkUcHsW9T2FVIA/oGFDlk3hBKZUICZVb1DewhbX4=
+github.com/reusee/dscope v0.0.0-20210526161153-f7503d5c0db8 h1:FVsTsmxHUBXU7mM0WN4icVXzsjzN80jOL/2xq4gptyc=
+github.com/reusee/dscope v0.0.0-20210526161153-f7503d5c0db8/go.mod h1:SvW2Crj9HwyOs1CNs5UOblEK2TOOyij3xlSnK1hdkzc=
 github.com/reusee/e4 v0.0.0-20210220140921-dc464f80154d/go.mod h1:Zfo0mBaNabtnbCtT4+HG9734x9G1VDT3Dwrqhp4wMfE=
-github.com/reusee/e4 v0.0.0-20210323110558-8674a57b4717 h1:oAErEznMiqQfcb8wxDZRFN6C9DXSBjxo6/AhaJLixfs=
-github.com/reusee/e4 v0.0.0-20210323110558-8674a57b4717/go.mod h1:Zfo0mBaNabtnbCtT4+HG9734x9G1VDT3Dwrqhp4wMfE=
+github.com/reusee/e4 v0.0.0-20210524031902-9c86ac6c4189 h1:xzxislg8ItxdP/pBS6rEoETV4wjNBuig18lsWbJT0DM=
+github.com/reusee/e4 v0.0.0-20210524031902-9c86ac6c4189/go.mod h1:uKxRTtwTi6F66Mzc+Lk/cEPBGwv0W1Macn9it1OXVE4=
 github.com/reusee/pr v0.0.0-20210102140014-3c32e4f45182/go.mod h1:yDr3ReZyWYFsHDC9Gxj8Udlcd1Fxm0N+QGMWkI5G5xE=
+github.com/reusee/pr v0.0.0-20210516083936-327176ab5209 h1:sIuGfukzgdvNv2sKfecmPm10yO/Bu3bJr3Nr0xBwkOQ=
+github.com/reusee/pr v0.0.0-20210516083936-327176ab5209/go.mod h1:PQpaqXEeqG5qfdTaGyvrxlCFcxH/hbBE4EO7Dz0XbTo=
 github.com/yuin/goldmark v1.2.1/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9decYSb74=
 golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2/go.mod h1:djNgcEr1/C05ACkg1iLfiJU5Ep61QUkGW8qpdssI0+w=
 golang.org/x/crypto v0.0.0-20191011191535-87dc89f01550/go.mod h1:yigFU9vqHzYiE8UmvKecakEJjdnWj3jj499lnFckfCI=
