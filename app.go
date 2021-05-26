@@ -15,7 +15,7 @@ type RenderElement js.Value
 type App struct {
 	wrapElement js.Value
 	element     js.Value
-	getScope    dscope.Get
+	getScope    dscope.GetScope
 	derive      dscope.Derive
 	dirty       chan struct{}
 	rootNode    *Node
