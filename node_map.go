@@ -2,16 +2,16 @@ package domui
 
 import "sync"
 
-func NewNodeCache() (
+func NewNodeMap() (
 	get func(key any, fn func() *Node) *Node,
 ) {
-	var cache sync.Map
+	var m sync.Map
 	get = func(key any, fn func() *Node) *Node {
-		if v, ok := cache.Load(key); ok {
+		if v, ok := m.Load(key); ok {
 			return v.(*Node)
 		}
 		node := fn()
-		cache.Store(key, node)
+		m.Store(key, node)
 		return node
 	}
 	return
