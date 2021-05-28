@@ -8,23 +8,17 @@ domui: DOM UI framework for Go
 ## Demo
 
 ```go
-// demo.go
-
 package main
 
 import (
 	"syscall/js"
 	"time"
 
-	"github.com/reusee/dscope"
 	"github.com/reusee/domui"
 )
 
-// Def is a type to hold all element and state definitions
-type Def struct{}
-
-// RootElement is the element to be rendered to RenderElement 
-func (_ Def) RootElement(
+// RootElement is the element to be rendered to RenderElement
+func RootElementDecl(
 	// use CounterElement as depenency
 	counter CounterElement,
 ) domui.RootElement {
@@ -40,14 +34,14 @@ func (_ Def) RootElement(
 type Num int
 
 // Num initial value
-func (_ Def) Num() Num {
+func NumDecl() Num {
 	return 0
 }
 
 // CounterElement is a button displaying and mutating Num
 type CounterElement domui.Spec
 
-func (_ Def) CounterElement(
+func CounterElementDecl(
 	// use Num as depenency
 	num Num,
 	// use Update function
@@ -71,14 +65,20 @@ func (_ Def) CounterElement(
 }
 
 // RenderElement is the HTMLElement to render on
-func (_ Def) RenderElement() domui.RenderElement {
+func RenderElementDecl() domui.RenderElement {
 	return domui.RenderElement(
 		js.Global().Get("document").Call("getElementById", "app"),
 	)
 }
 
 func main() {
-	domui.NewApp(dscope.Methods(new(Def))...)
+	domui.NewApp(
+		// list all declarations
+		RootElementDecl,
+		NumDecl,
+		CounterElementDecl,
+		RenderElementDecl,
+	)
 	time.Sleep(time.Hour * 24 * 365 * 200)
 }
 
