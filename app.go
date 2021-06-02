@@ -10,8 +10,6 @@ import (
 
 type RootElement Spec
 
-type RenderElement js.Value
-
 type App struct {
 	wrapElement js.Value
 	element     js.Value
@@ -23,6 +21,7 @@ type App struct {
 }
 
 func NewApp(
+	renderElement js.Value,
 	defs ...any,
 ) *App {
 
@@ -45,8 +44,7 @@ func NewApp(
 	app.derive(defs...)
 
 	var onInit OnAppInit
-	var renderElement RenderElement
-	app.getScope().Assign(&onInit, &renderElement)
+	app.getScope().Assign(&onInit)
 
 	onInit()
 

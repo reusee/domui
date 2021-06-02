@@ -3,7 +3,7 @@ domui: DOM UI framework for Go
 ## Features
 
 * pure go code compiled to wasm
-* unified view and state in dependent declarations
+* unified reactive system for view and state management
 
 ## Demo
 
@@ -64,20 +64,14 @@ func CounterElementDecl(
 	)
 }
 
-// RenderElement is the HTMLElement to render on
-func RenderElementDecl() domui.RenderElement {
-	return domui.RenderElement(
-		js.Global().Get("document").Call("getElementById", "app"),
-	)
-}
-
 func main() {
 	domui.NewApp(
+		// render element
+		js.Global().Get("document").Call("getElementById", "app"),
 		// list all declarations
 		RootElementDecl,
 		NumDecl,
 		CounterElementDecl,
-		RenderElementDecl,
 	)
 	time.Sleep(time.Hour * 24 * 365 * 200)
 }
@@ -98,56 +92,5 @@ type (
 )
 ```
 
-build wasm file:
-
-```
-env GOOS=js GOARCH=wasm go build -o demo.wasm demo.go
-```
-
-entry html:
-
-```html
-<!-- demo.html -->
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="UTF-8">
-    <script src="wasm_exec.js"></script>
-  </head>
-  <body>
-    <div id="app"></div>
-    <script>
-
-      (async function exec() {
-        const go = new Go();
-        const result = await WebAssembly.instantiateStreaming(fetch("demo.wasm"), go.importObject);
-        await go.run(result.instance);
-      })()
-
-    </script>
-  </body>
-</html>
-
-```
-
-run a simple http file server:
-
-```go
-
-package main
-
-import (
-	"net/http"
-	"os"
-)
-
-func main() {
-	dirFS := os.DirFS(".")
-	http.Handle("/", http.FileServer(http.FS(dirFS)))
-	http.ListenAndServe(":46789", nil)
-}
-
-```
-
-Open `http://localhost:46789/demo.html` in browser to check the result
+Check the [official wiki](https://github.com/golang/go/wiki/WebAssembly) for how to compile and deploy.
 

@@ -56,20 +56,14 @@ func CounterElementDecl(
 	)
 }
 
-// RenderElement is the HTMLElement to render on
-func RenderElementDecl() domui.RenderElement {
-	return domui.RenderElement(
-		js.Global().Get("document").Call("getElementById", "app"),
-	)
-}
-
 func main() {
 	domui.NewApp(
+		// render element
+		js.Global().Get("document").Call("getElementById", "app"),
 		// list all declarations
 		RootElementDecl,
 		NumDecl,
 		CounterElementDecl,
-		RenderElementDecl,
 	)
 	time.Sleep(time.Hour * 24 * 365 * 200)
 }
