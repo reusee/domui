@@ -37,7 +37,7 @@ func defRootElement() domui.RootElement {
 
 func main() {
 	domui.NewApp(
-	  // render on <div id="app">
+		// render on <div id="app">
 		js.Global().Get("document").Call("getElementById", "app"),
 		// provide definitions
 		defRootElement,
