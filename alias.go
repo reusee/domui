@@ -14,6 +14,13 @@ type (
 )
 
 var (
-	ce, he = e4.Check, e4.Handle
-	sp     = fmt.Sprintf
+	ce = e4.Check.With(e4.DropFrame(func(frame e4.Frame) bool {
+		switch frame.Pkg {
+		case "dscope", "runtime", "reflect":
+			return true
+		}
+		return false
+	}))
+	he = e4.Handle
+	sp = fmt.Sprintf
 )
