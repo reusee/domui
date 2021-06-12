@@ -2,95 +2,224 @@ domui: DOM UI framework for Go
 
 ## Features
 
-* pure go code compiled to wasm
-* unified reactive system for view and state management
+* Pure go code compiled to wasm
+* Dependent reactive system for both view and state management
 
-## Demo
+## Prerequisites
+
+* Go compiler 1.16 or newer
+* If you are not familiar with compiling and running WebAssembly program, 
+please read [the official wiki](https://github.com/golang/go/wiki/WebAssembly)
+
+## Tutorial
+
+### Minimal runnable program
 
 ```go
 package main
 
 import (
-	"syscall/js"
-	"time"
-
 	"github.com/reusee/domui"
+	"syscall/js"
 )
 
-// RootElement is the element to be rendered to RenderElement
-func RootElementDecl(
-	// use CounterElement as depenency
-	counter CounterElement,
+// ergonomic aliases
+var (
+	Div = domui.Tag("div")
+	T   = domui.Text
+)
+
+// define the root UI element
+func defRootElement() domui.RootElement {
+	return Div(T("Hello, world!"))
+}
+
+func main() {
+	domui.NewApp(
+	  // render on <div id="app">
+		js.Global().Get("document").Call("getElementById", "app"),
+		// provide definitions
+		defRootElement,
+	)
+	// prevent from exiting
+	time.Sleep(time.Hour * 24 * 365 * 100)
+}
+```
+
+### The dependent system
+
+The definition of RootElement can be refactored to multiple dependent components.
+
+```go
+package main
+
+import (
+	"github.com/reusee/domui"
+	"syscall/js"
+)
+
+var (
+	Div = domui.Tag("div")
+	T   = domui.Text
+)
+
+type (
+	Spec = domui.Spec
+)
+
+// A string-typed state
+type Greetings string
+
+// define Greetings
+func defGreetings() Greetings {
+	return "Hello, world!"
+}
+
+// An UI element
+type GreetingsElement Spec
+
+// define GreetingsElement
+func defGreetingsElement(
+	// use Greetings
+	greetings Greetings,
+) GreetingsElement {
+	return Div(T("%s", greetings))
+}
+
+// The root UI element
+func defRootElement(
+	// use GreetingsElement
+	greetingsElem GreetingsElement,
 ) domui.RootElement {
 	return Div(
-		P(
-			S("hello, world!"),
-		),
-		counter,
+		greetingsElem,
 	)
 }
 
-// Num is an integer state
-type Num int
+func main() {
+	domui.NewApp(
+		js.Global().Get("document").Call("getElementById", "app"),
+		// provide definitions
+		defRootElement,
+		defGreetings,
+		defGreetingsElement,
+	)
+	time.Sleep(time.Hour * 24 * 365 * 100)
+}
+```
 
-// Num initial value
-func NumDecl() Num {
-	return 0
+### The reactive system
+
+Definitions can be updated. 
+All affected definitions will be re-calculated recursively till the RootElement.
+
+```go
+package main
+
+import (
+	"github.com/reusee/domui"
+	"syscall/js"
+	"time"
+)
+
+var (
+	Div     = domui.Tag("div")
+	T       = domui.Text
+	OnClick = domui.On("click")
+)
+
+type (
+	Spec   = domui.Spec
+	Update = domui.Update
+)
+
+type Greetings string
+
+func defGreetings() Greetings {
+	return "Hello, world!"
 }
 
-// CounterElement is a button displaying and mutating Num
-type CounterElement domui.Spec
+type GreetingsElement Spec
 
-func CounterElementDecl(
-	// use Num as depenency
-	num Num,
-	// use Update function
+func defGreetingsElement(
+	greetings Greetings,
+) GreetingsElement {
+	return Div(T("%s", greetings))
+}
+
+func defRootElement(
+	greetingsElem GreetingsElement,
+	// use the Update function
 	update Update,
-) CounterElement {
-	return Button(
+) domui.RootElement {
+	return Div(
+		greetingsElem,
 
-		// label
-		S("%d", num),
-
-		// style
-		FontSize("%.2frem", float64(num)*0.5+1),
-		Color("#09C"),
-
-		// increase Num on click
+		// when clicked, update Greetings
 		OnClick(func() {
-			num++
-			update(&num)
+			greetings := Greetings("Hello, DomUI!")
+			update(&greetings)
 		}),
 	)
 }
 
 func main() {
 	domui.NewApp(
-		// render element
 		js.Global().Get("document").Call("getElementById", "app"),
-		// list all declarations
-		RootElementDecl,
-		NumDecl,
-		CounterElementDecl,
+		defRootElement,
+		defGreetings,
+		defGreetingsElement,
 	)
-	time.Sleep(time.Hour * 24 * 365 * 200)
+	time.Sleep(time.Hour * 24 * 365 * 100)
 }
-
-// aliases
-var (
-	Div      = domui.Tag("div")
-	P        = domui.Tag("p")
-	S        = domui.S
-	Button   = domui.Tag("button")
-	OnClick  = domui.On("click")
-	FontSize = domui.Style("font-size")
-	Color    = domui.Style("color")
-)
-
-type (
-	Update = domui.Update
-)
 ```
 
-Check the [official wiki](https://github.com/golang/go/wiki/WebAssembly) for how to compile and deploy.
+### DOM element specifications
+
+The above programs demonstrated tag and event usages.
+Attributes, styles, classes can also be specified.
+
+```go
+package main
+
+import (
+	"github.com/reusee/domui"
+	"syscall/js"
+	"time"
+)
+
+var (
+	Div        = domui.Tag("div")
+	Link       = domui.Tag("a")
+	Ahref      = domui.Attr("href")
+	Sfont_size = domui.Style("font-size")
+	T          = domui.Text
+	ID         = domui.ID
+	Class      = domui.Class
+)
+
+func defRootElement() domui.RootElement {
+	return Div(
+		Link(
+			T("Hello, world!"),
+			// id
+			ID("link"),
+			// class
+			Class("link1", "link2"),
+			// href attribute
+			Ahref("http://github.com"),
+			// font-size style
+			Sfont_size("1.6rem"),
+		),
+	)
+}
+
+func main() {
+	domui.NewApp(
+		js.Global().Get("document").Call("getElementById", "app"),
+		defRootElement,
+	)
+	time.Sleep(time.Hour * 24 * 365 * 100)
+}
+```
 
