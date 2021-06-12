@@ -21,6 +21,7 @@ package main
 import (
 	"github.com/reusee/domui"
 	"syscall/js"
+	"time"
 )
 
 // ergonomic aliases
@@ -56,6 +57,7 @@ package main
 import (
 	"github.com/reusee/domui"
 	"syscall/js"
+	"time"
 )
 
 var (
