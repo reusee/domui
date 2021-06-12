@@ -1,2 +1,3 @@
-/demo.wasm
+/demo*.wasm
+/run-demo.exe
 

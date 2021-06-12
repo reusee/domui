@@ -7,11 +7,22 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
+	"path/filepath"
+	"strings"
 )
+
+var pt = fmt.Printf
 
 func main() {
 
-	cmd := exec.Command("go", "build", "-o", "demo.wasm", "demo.go")
+	srcFile := "demo.go"
+	if len(os.Args) > 1 {
+		srcFile = filepath.Clean(os.Args[1])
+	}
+	wasmFile := srcFile[:strings.LastIndex(srcFile, ".go")] + ".wasm"
+	pt("src %s, wasm %s\n", srcFile, wasmFile)
+
+	cmd := exec.Command("go", "build", "-o", wasmFile, srcFile)
 	cmd.Env = append(os.Environ(),
 		"GOOS=js",
 		"GOARCH=wasm",
@@ -24,7 +35,32 @@ func main() {
 
 	dirFS := os.DirFS(".")
 	http.Handle("/", http.FileServer(http.FS(dirFS)))
+	http.HandleFunc("/demo.html", func(w http.ResponseWriter, req *http.Request) {
+		w.Write([]byte(`
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <script src="wasm_exec.js"></script>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script>
+
+      (async function exec() {
+        const go = new Go();
+        const result = await WebAssembly.instantiateStreaming(
+          fetch("` + wasmFile + `"), go.importObject);
+        await go.run(result.instance);
+      })()
+
+    </script>
+  </body>
+</html>
+    `))
+	})
 	addr := "127.0.0.1:46789"
 	fmt.Printf("http://%s/demo.html\n", addr)
 	http.ListenAndServe(addr, nil)
+
 }
