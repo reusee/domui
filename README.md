@@ -232,7 +232,7 @@ func main() {
 
 ### Parameterized element
 
-To make reusable element, define it as a function.
+To make a reusable element, define it as a function.
 
 ```go
 package main
