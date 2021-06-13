@@ -41,10 +41,12 @@ func defRootElement(
 	return Div(
 		greetingsElem,
 
-		// when clicked, update Greetings
+		// when clicked, do update
 		OnClick(func() {
-			greetings := Greetings("Hello, DomUI!")
-			update(&greetings)
+			// provide a new definition for Greetings
+			update(func() Greetings {
+				return "Hello, DomUI!"
+			})
 		}),
 	)
 }
