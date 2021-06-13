@@ -2,13 +2,13 @@ package domui
 
 import "sync"
 
-func NewNodeMap() (
-	get func(key any, fn func() *Node) *Node,
+func NewSpecMap() (
+	get func(key any, fn func() Spec) Spec,
 ) {
 	var m sync.Map
-	get = func(key any, fn func() *Node) *Node {
+	get = func(key any, fn func() Spec) Spec {
 		if v, ok := m.Load(key); ok {
-			return v.(*Node)
+			return v.(Spec)
 		}
 		node := fn()
 		m.Store(key, node)
