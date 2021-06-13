@@ -22,9 +22,11 @@ please read [the official wiki](https://github.com/golang/go/wiki/WebAssembly)
   + [Miscellaneous usages](#misc)
 
 <a name="tutorial" />
+
 ## Tutorial
 
 <a name="minimal" />
+
 ### Minimal runnable program
 
 ```go
@@ -64,6 +66,7 @@ func main() {
 ```
 
 <a name="dependent" />
+
 ### The dependent system
 
 The definition of RootElement can be refactored to multiple dependent components.
@@ -126,6 +129,7 @@ func main() {
 ```
 
 <a name="reactive" />
+
 ### The reactive system
 
 Definitions can be updated. 
@@ -194,6 +198,7 @@ func main() {
 ```
 
 <a name="dom" />
+
 ### DOM element specifications
 
 The above programs demonstrated tag and event usages.
@@ -246,6 +251,7 @@ func main() {
 ```
 
 <a name="parameterized" />
+
 ### Parameterized element
 
 To make a reusable element, define it as a function.
@@ -335,6 +341,7 @@ func main() {
 ```
 
 <a name="misc" />
+
 ### Miscellaneous usages
 
 When updating a definition that has no dependency,
