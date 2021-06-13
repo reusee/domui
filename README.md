@@ -3,7 +3,11 @@ domui: DOM UI framework for Go
 ## Features
 
 * Pure go code compiled to wasm
+  + Utilizing Go's excellent support for static typing and dynamic reflection
+  + Runs on any WebAssembly and DOM supported browsers, Electron, etc
 * Dependent reactive system for both view and state management
+  + Conceptually unify view component and state management
+  + No hooks, redux, recoil, mobx ...
 
 ## Prerequisites
 
