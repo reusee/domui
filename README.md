@@ -11,8 +11,20 @@ domui: DOM UI framework for Go
 * If you are not familiar with compiling and running WebAssembly program, 
 please read [the official wiki](https://github.com/golang/go/wiki/WebAssembly)
 
+## Table of contents
+
+* [Tutorial](#tutorial)
+  + [Minimal runnable program](#minimal)
+  + [The dependent system](#dependent)
+  + [The reactive system](#reactive)
+  + [DOM element specifications](#dom)
+  + [Parameterized element](#parameterized)
+  + [Miscellaneous usages](#misc)
+
+<a name="tutorial" />
 ## Tutorial
 
+<a name="minimal" />
 ### Minimal runnable program
 
 ```go
@@ -51,6 +63,7 @@ func main() {
 }
 ```
 
+<a name="dependent" />
 ### The dependent system
 
 The definition of RootElement can be refactored to multiple dependent components.
@@ -112,6 +125,7 @@ func main() {
 }
 ```
 
+<a name="reactive" />
 ### The reactive system
 
 Definitions can be updated. 
@@ -179,6 +193,7 @@ func main() {
 }
 ```
 
+<a name="dom" />
 ### DOM element specifications
 
 The above programs demonstrated tag and event usages.
@@ -230,6 +245,7 @@ func main() {
 }
 ```
 
+<a name="parameterized" />
 ### Parameterized element
 
 To make a reusable element, define it as a function.
@@ -318,9 +334,10 @@ func main() {
 }
 ```
 
+<a name="misc" />
 ### Miscellaneous usages
 
-When updating a definition which has no dependency,
+When updating a definition that has no dependency,
 instead of passing a function, a pointer can be used.
 
 ```go
