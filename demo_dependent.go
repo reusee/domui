@@ -14,6 +14,7 @@ var (
 )
 
 type (
+	Def  struct{}
 	Spec = domui.Spec
 )
 
@@ -21,7 +22,7 @@ type (
 type Greetings string
 
 // define Greetings
-func defGreetings() Greetings {
+func (_ Def) Greetings() Greetings {
 	return "Hello, world!"
 }
 
@@ -29,7 +30,7 @@ func defGreetings() Greetings {
 type GreetingsElement Spec
 
 // define GreetingsElement
-func defGreetingsElement(
+func (_ Def) GreetingsElement(
 	// use Greetings
 	greetings Greetings,
 ) GreetingsElement {
@@ -37,7 +38,7 @@ func defGreetingsElement(
 }
 
 // The root UI element
-func defRootElement(
+func (_ Def) RootElement(
 	// use GreetingsElement
 	greetingsElem GreetingsElement,
 ) domui.RootElement {
@@ -49,10 +50,7 @@ func defRootElement(
 func main() {
 	domui.NewApp(
 		js.Global().Get("document").Call("getElementById", "app"),
-		// provide definitions
-		defRootElement,
-		defGreetings,
-		defGreetingsElement,
+		domui.Methods(new(Def))...,
 	)
 	time.Sleep(time.Hour * 24 * 365 * 100)
 }

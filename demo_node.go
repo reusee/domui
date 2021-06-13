@@ -18,7 +18,9 @@ var (
 	Class      = domui.Class
 )
 
-func defRootElement() domui.RootElement {
+type Def struct{}
+
+func (_ Def) RootElement() domui.RootElement {
 	return Div(
 		Link(
 			T("Hello, world!"),
@@ -37,7 +39,7 @@ func defRootElement() domui.RootElement {
 func main() {
 	domui.NewApp(
 		js.Global().Get("document").Call("getElementById", "app"),
-		defRootElement,
+		domui.Methods(new(Def))...,
 	)
 	time.Sleep(time.Hour * 24 * 365 * 100)
 }

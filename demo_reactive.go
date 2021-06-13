@@ -15,25 +15,26 @@ var (
 )
 
 type (
+	Def    struct{}
 	Spec   = domui.Spec
 	Update = domui.Update
 )
 
 type Greetings string
 
-func defGreetings() Greetings {
+func (_ Def) Greetings() Greetings {
 	return "Hello, world!"
 }
 
 type GreetingsElement Spec
 
-func defGreetingsElement(
+func (_ Def) GreetingsElement(
 	greetings Greetings,
 ) GreetingsElement {
 	return Div(T("%s", greetings))
 }
 
-func defRootElement(
+func (_ Def) RootElement(
 	greetingsElem GreetingsElement,
 	// use the Update function
 	update Update,
@@ -54,9 +55,7 @@ func defRootElement(
 func main() {
 	domui.NewApp(
 		js.Global().Get("document").Call("getElementById", "app"),
-		defRootElement,
-		defGreetings,
-		defGreetingsElement,
+		domui.Methods(new(Def))...,
 	)
 	time.Sleep(time.Hour * 24 * 365 * 100)
 }

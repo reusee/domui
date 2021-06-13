@@ -30,8 +30,12 @@ var (
 	T   = domui.Text
 )
 
+// A type to hold all definitions
+type Def struct{}
+
 // define the root UI element
-func defRootElement() domui.RootElement {
+func (_ Def) RootElement() domui.RootElement {
+	// same to <div>Hello, world!</div>
 	return Div(T("Hello, world!"))
 }
 
@@ -39,8 +43,8 @@ func main() {
 	domui.NewApp(
 		// render on <div id="app">
 		js.Global().Get("document").Call("getElementById", "app"),
-		// provide definitions
-		defRootElement,
+		// pass Def's methods as definitions
+		domui.Methods(new(Def))...,
 	)
 	// prevent from exiting
 	time.Sleep(time.Hour * 24 * 365 * 100)
@@ -66,6 +70,7 @@ var (
 )
 
 type (
+	Def  struct{}
 	Spec = domui.Spec
 )
 
@@ -73,15 +78,15 @@ type (
 type Greetings string
 
 // define Greetings
-func defGreetings() Greetings {
+func (_ Def) Greetings() Greetings {
 	return "Hello, world!"
 }
 
-// A UI element
+// An UI element
 type GreetingsElement Spec
 
 // define GreetingsElement
-func defGreetingsElement(
+func (_ Def) GreetingsElement(
 	// use Greetings
 	greetings Greetings,
 ) GreetingsElement {
@@ -89,7 +94,7 @@ func defGreetingsElement(
 }
 
 // The root UI element
-func defRootElement(
+func (_ Def) RootElement(
 	// use GreetingsElement
 	greetingsElem GreetingsElement,
 ) domui.RootElement {
@@ -101,10 +106,7 @@ func defRootElement(
 func main() {
 	domui.NewApp(
 		js.Global().Get("document").Call("getElementById", "app"),
-		// provide definitions
-		defRootElement,
-		defGreetings,
-		defGreetingsElement,
+		domui.Methods(new(Def))...,
 	)
 	time.Sleep(time.Hour * 24 * 365 * 100)
 }
@@ -131,25 +133,26 @@ var (
 )
 
 type (
+	Def    struct{}
 	Spec   = domui.Spec
 	Update = domui.Update
 )
 
 type Greetings string
 
-func defGreetings() Greetings {
+func (_ Def) Greetings() Greetings {
 	return "Hello, world!"
 }
 
 type GreetingsElement Spec
 
-func defGreetingsElement(
+func (_ Def) GreetingsElement(
 	greetings Greetings,
 ) GreetingsElement {
 	return Div(T("%s", greetings))
 }
 
-func defRootElement(
+func (_ Def) RootElement(
 	greetingsElem GreetingsElement,
 	// use the Update function
 	update Update,
@@ -170,9 +173,7 @@ func defRootElement(
 func main() {
 	domui.NewApp(
 		js.Global().Get("document").Call("getElementById", "app"),
-		defRootElement,
-		defGreetings,
-		defGreetingsElement,
+		domui.Methods(new(Def))...,
 	)
 	time.Sleep(time.Hour * 24 * 365 * 100)
 }
@@ -202,7 +203,9 @@ var (
 	Class      = domui.Class
 )
 
-func defRootElement() domui.RootElement {
+type Def struct{}
+
+func (_ Def) RootElement() domui.RootElement {
 	return Div(
 		Link(
 			T("Hello, world!"),
@@ -221,7 +224,7 @@ func defRootElement() domui.RootElement {
 func main() {
 	domui.NewApp(
 		js.Global().Get("document").Call("getElementById", "app"),
-		defRootElement,
+		domui.Methods(new(Def))...,
 	)
 	time.Sleep(time.Hour * 24 * 365 * 100)
 }
@@ -250,6 +253,7 @@ var (
 )
 
 type (
+	Def    struct{}
 	any    = interface{}
 	Spec   = domui.Spec
 	Update = domui.Update
@@ -259,7 +263,7 @@ type (
 // Greetings with name parameter
 type Greetings func(name any) Spec
 
-func defGreetings(
+func (_ Def) Greetings(
 	update Update,
 ) Greetings {
 	return func(name any) Spec {
@@ -279,17 +283,17 @@ func defGreetings(
 
 type TheWorld string
 
-func defTheWorld() TheWorld {
+func (_ Def) TheWorld() TheWorld {
 	return "world"
 }
 
 type TheDomUI string
 
-func defTheDomUI() TheDomUI {
+func (_ Def) TheDomUI() TheDomUI {
 	return "DomUI"
 }
 
-func defRootElement(
+func (_ Def) RootElement(
 	greetings Greetings,
 	world TheWorld,
 	domUI TheDomUI,
@@ -308,10 +312,7 @@ func defRootElement(
 func main() {
 	domui.NewApp(
 		js.Global().Get("document").Call("getElementById", "app"),
-		defRootElement,
-		defGreetings,
-		defTheWorld,
-		defTheDomUI,
+		domui.Methods(new(Def))...,
 	)
 	time.Sleep(time.Hour * 24 * 365 * 100)
 }

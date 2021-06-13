@@ -18,6 +18,7 @@ var (
 )
 
 type (
+	Def    struct{}
 	any    = interface{}
 	Spec   = domui.Spec
 	Update = domui.Update
@@ -27,7 +28,7 @@ type (
 // Greetings with name parameter
 type Greetings func(name any) Spec
 
-func defGreetings(
+func (_ Def) Greetings(
 	update Update,
 ) Greetings {
 	return func(name any) Spec {
@@ -47,17 +48,17 @@ func defGreetings(
 
 type TheWorld string
 
-func defTheWorld() TheWorld {
+func (_ Def) TheWorld() TheWorld {
 	return "world"
 }
 
 type TheDomUI string
 
-func defTheDomUI() TheDomUI {
+func (_ Def) TheDomUI() TheDomUI {
 	return "DomUI"
 }
 
-func defRootElement(
+func (_ Def) RootElement(
 	greetings Greetings,
 	world TheWorld,
 	domUI TheDomUI,
@@ -76,10 +77,7 @@ func defRootElement(
 func main() {
 	domui.NewApp(
 		js.Global().Get("document").Call("getElementById", "app"),
-		defRootElement,
-		defGreetings,
-		defTheWorld,
-		defTheDomUI,
+		domui.Methods(new(Def))...,
 	)
 	time.Sleep(time.Hour * 24 * 365 * 100)
 }
