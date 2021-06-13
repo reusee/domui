@@ -320,6 +320,18 @@ func main() {
 
 ### Miscellaneous usages
 
+When updating a definition which has no dependency,
+instead of passing a function, a pointer can be used.
+
+```go
+newGreetings := Greetings("Hello!")
+update(&newGreetings)
+// is the same to
+update(func() Greetings {
+  return "Hello!"
+})
+```
+
 To do something on App inits, define one or more OnAppInit
 
 ```go
