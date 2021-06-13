@@ -364,7 +364,7 @@ Specs can be cached for reusing
 type Article func(title string, content string) Spec
 
 func (_ Def) Article() Article {
-  m := NewSpecMap()
+  m := domui.NewSpecMap()
   return m(
     // key
     [2]any{title, content},
@@ -391,9 +391,9 @@ func (_ Def) Link() Link {
   return func(href string, bold bool) Spec {
     return A(
       // If
-      If(href != "", Ahref(href)),
+      domui.If(href != "", Ahref(href)),
       // Alt
-      Alt(bold,
+      domui.Alt(bold,
         Sfont_weight("bold"),
         Sfont_weight("normal"),
       ),
@@ -411,11 +411,11 @@ func (_ Def) List() List {
   return func(elems []string) Spec {
     return Div(
       // For
-      For(elems, func(s string) Spec {
+      domui.For(elems, func(s string) Spec {
         return Div(T("%s", s))
       }),
       // Range
-      Range(elems, func(i int, s string) Spec {
+      domui.Range(elems, func(i int, s string) Spec {
         return Div(T("%d: %s", i, s))
       }),
     )
