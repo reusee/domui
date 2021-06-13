@@ -8,6 +8,8 @@ domui: DOM UI framework for Go
 * Dependent reactive system for both view and state management
   + Conceptually unify view component and state management
   + No hooks, redux, recoil, mobx ...
+* Auto and efficient DOM tree updating
+  + Based on virtual DOM diff and patch
 
 ## Prerequisites
 
