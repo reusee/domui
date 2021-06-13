@@ -23,4 +23,6 @@ var (
 	}))
 	he = e4.Handle
 	sp = fmt.Sprintf
+
+	Methods = dscope.Methods
 )
