@@ -318,3 +318,96 @@ func main() {
 }
 ```
 
+### Miscellaneous usages
+
+To do something on App inits, define one or more OnAppInit
+
+```go
+func (_ Def) InitFoo() domui.OnAppInit {
+  // do something
+}
+
+func (_ Def) InitBar() domui.OnAppInit {
+  // do something
+}
+```
+
+To access the DOM element in an event handler, use a js.Value parameter 
+
+```go
+type Foo Spec
+
+func (_ Def) Foo() Foo {
+  retrun Div(
+    OnClick(func(elem js.Value) {
+      _ = elem.Call("getAttribute", "href").String()
+    }),
+  )
+}
+```
+
+Specs can be cached for reusing
+
+```go
+type Article func(title string, content string) Spec
+
+func (_ Def) Article() Article {
+  m := NewSpecMap()
+  return m(
+    // key
+    [2]any{title, content},
+    // value
+    func() Spec {
+      return Div( /* ... */ )
+    },
+  )
+}
+```
+
+Some conditional Spec constructors are provided
+
+```go
+var (
+  A = domui.Tag("a")
+  Ahref = domui.Attr("href")
+  Sfont_weight = domui.Style("font-weight")
+)
+
+type Link func(href string, bold bool) Spec
+
+func (_ Def) Link() Link {
+  return func(href string, bold bool) Spec {
+    return A(
+      // If
+      If(href != "", Ahref(href)),
+      // Alt
+      Alt(bold,
+        Sfont_weight("bold"),
+        Sfont_weight("normal"),
+      ),
+    )
+  }
+}
+```
+
+And loop constructors
+
+```go
+type List func(elems []string) Spec
+
+func (_ Def) List() List {
+  return func(elems []string) Spec {
+    return Div(
+      // For
+      For(elems, func(s string) Spec {
+        return Div(T("%s", s))
+      }),
+      // Range
+      Range(elems, func(i int, s string) Spec {
+        return Div(T("%d: %s", i, s))
+      }),
+    )
+  }
+}
+```
+
