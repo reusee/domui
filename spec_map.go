@@ -10,9 +10,9 @@ func NewSpecMap() (
 		if v, ok := m.Load(key); ok {
 			return v.(Spec)
 		}
-		node := fn()
-		m.Store(key, node)
-		return node
+		spec := fn()
+		m.Store(key, spec)
+		return spec
 	}
 	return
 }
