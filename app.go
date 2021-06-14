@@ -14,7 +14,7 @@ type App struct {
 	wrapElement js.Value
 	element     js.Value
 	getScope    dscope.GetScope
-	derive      dscope.Derive
+	mutate      dscope.Mutate
 	dirty       chan struct{}
 	rootNode    *Node
 	fns         chan any
@@ -30,7 +30,7 @@ func NewApp(
 		fns:   make(chan any),
 	}
 
-	scope := dscope.NewDeriving(
+	scope := dscope.NewMutable(
 		func() Update {
 			return app.Update
 		},
@@ -38,10 +38,10 @@ func NewApp(
 			return app
 		},
 	)
-	scope.Assign(&app.getScope, &app.derive)
+	scope.Assign(&app.getScope, &app.mutate)
 
 	defs = append(defs, dscope.Methods(new(Def))...)
-	app.derive(defs...)
+	app.mutate(defs...)
 
 	var onInit OnAppInit
 	app.getScope().Assign(&onInit)
@@ -89,7 +89,7 @@ func (_ Def) OnAppInit() OnAppInit {
 }
 
 func (a *App) Update(decls ...any) Scope {
-	scope := a.derive(decls...)
+	scope := a.mutate(decls...)
 	select {
 	case a.dirty <- struct{}{}:
 	default:
