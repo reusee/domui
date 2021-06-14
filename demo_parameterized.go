@@ -46,16 +46,15 @@ func (_ Def) Greetings(
 	}
 }
 
-type TheWorld string
+// string-typed states
+type (
+	TheWorld string
+	TheDomUI string
+)
 
-func (_ Def) TheWorld() TheWorld {
-	return "world"
-}
-
-type TheDomUI string
-
-func (_ Def) TheDomUI() TheDomUI {
-	return "DomUI"
+// define two types in one function
+func (_ Def) Names() (TheWorld, TheDomUI) {
+	return "world", "DomUI"
 }
 
 func (_ Def) RootElement(
