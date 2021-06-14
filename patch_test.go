@@ -78,7 +78,7 @@ func TestPatch(t *testing.T) {
 				})
 				app.Render()
 				html = app.HTML()
-				if html != `<div id="bar" class="bar qux" style="font-size: 2px; display: block; font-weight: 2;" attr2="bar" bar="bar"></div>` {
+				if html != `<div id="bar" class="bar qux" style="font-size: 2px; font-weight: 2; display: block;" attr2="bar" bar="bar"></div>` {
 					t.Fatalf("got %s", html)
 				}
 
