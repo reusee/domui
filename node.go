@@ -191,6 +191,23 @@ func (n *Node) appendChild(child *Node) {
 	}
 }
 
+func (n *Node) insertChild(pos int, child *Node) {
+	n.childNodes = append(n.childNodes[:pos],
+		append([]*Node{child}, n.childNodes[pos:]...)...)
+	i := sort.Search(len(n.childNodesSorted), func(i int) bool {
+		return n.childNodesSorted[i].serial > child.serial
+	})
+	if i < len(n.childNodesSorted) {
+		newSlice := make([]*Node, 0, len(n.childNodesSorted)+1)
+		newSlice = append(newSlice, n.childNodesSorted[:i]...)
+		newSlice = append(newSlice, child)
+		newSlice = append(newSlice, n.childNodesSorted[i:]...)
+		n.childNodesSorted = newSlice
+	} else {
+		n.childNodesSorted = append(n.childNodesSorted, child)
+	}
+}
+
 func (n *Node) popChild() {
 	node := n.childNodes[len(n.childNodes)-1]
 	n.childNodes = n.childNodes[:len(n.childNodes)-1]
