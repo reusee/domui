@@ -1,17 +1,22 @@
 package domui
 
-import "fmt"
+import (
+	"fmt"
+	"sync/atomic"
+)
 
 func Text(format string, args ...any) *Node {
 	if len(args) == 0 {
 		return &Node{
-			Kind: TextNode,
-			Text: format,
+			serial: atomic.AddInt64(&nodeSerial, 1),
+			Kind:   TextNode,
+			Text:   format,
 		}
 	}
 	return &Node{
-		Kind: TextNode,
-		Text: fmt.Sprintf(format, args...),
+		serial: atomic.AddInt64(&nodeSerial, 1),
+		Kind:   TextNode,
+		Text:   fmt.Sprintf(format, args...),
 	}
 }
 

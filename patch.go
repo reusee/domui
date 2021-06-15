@@ -2,6 +2,7 @@ package domui
 
 import (
 	"strings"
+	"sync/atomic"
 	"syscall/js"
 )
 
@@ -102,10 +103,10 @@ func patch(
 					childElement,
 					elementChildren.Index(i),
 				)
-				lastNode.childNodes = append(
-					lastNode.childNodes[:i],
-					append([]*Node{nil}, lastNode.childNodes[i:]...)...,
-				) // insert placeholder
+				// insert placeholder
+				lastNode.appendChild(&Node{
+					serial: atomic.AddInt64(&nodeSerial, 1),
+				})
 
 			} else {
 				// replace
@@ -131,8 +132,8 @@ func patch(
 			lastChild := element.Get("lastChild")
 			lastChild.Call("remove")
 			unsetEventSpecs(lastChild)
+			lastNode.popChild()
 		}
-		lastNode.childNodes = lastNode.childNodes[:len(lastNode.childNodes)-n]
 	}
 
 	// id

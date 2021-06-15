@@ -3,6 +3,7 @@ package domui
 import (
 	"fmt"
 	"reflect"
+	"sort"
 	"syscall/js"
 )
 
@@ -13,18 +14,24 @@ const (
 	TextNode
 )
 
+var (
+	nodeSerial int64
+)
+
 type Node struct {
-	Kind       NodeKind
-	Text       string
-	ID         string
-	Style      string
-	Styles     SortedMap // string: string
-	Classes    SortedMap // string: struct{}
-	Attributes SortedMap // string: any
-	Events     map[string][]EventSpec
-	childNodes []*Node
-	Focus      bool
-	args       []reflect.Value
+	serial           int64
+	Kind             NodeKind
+	Text             string
+	ID               string
+	Style            string
+	Styles           SortedMap // string: string
+	Classes          SortedMap // string: struct{}
+	Attributes       SortedMap // string: any
+	Events           map[string][]EventSpec
+	childNodes       []*Node
+	childNodesSorted []*Node
+	Focus            bool
+	args             []reflect.Value
 }
 
 func (_ *Node) IsSpec() {}
@@ -148,7 +155,7 @@ func (node *Node) ApplySpec(spec Spec) {
 		)
 
 	case *Node:
-		node.childNodes = append(node.childNodes, spec)
+		node.appendChild(spec)
 
 	case Specs:
 		for _, s := range spec {
@@ -166,4 +173,35 @@ func (node *Node) ApplySpec(spec Spec) {
 		panic(fmt.Errorf("unknown spec: %#v", spec))
 
 	}
+}
+
+func (n *Node) appendChild(child *Node) {
+	n.childNodes = append(n.childNodes, child)
+	i := sort.Search(len(n.childNodesSorted), func(i int) bool {
+		return n.childNodesSorted[i].serial > child.serial
+	})
+	if i < len(n.childNodesSorted) {
+		newSlice := make([]*Node, 0, len(n.childNodesSorted)+1)
+		newSlice = append(newSlice, n.childNodesSorted[:i]...)
+		newSlice = append(newSlice, child)
+		newSlice = append(newSlice, n.childNodesSorted[i:]...)
+		n.childNodesSorted = newSlice
+	} else {
+		n.childNodesSorted = append(n.childNodesSorted, child)
+	}
+}
+
+func (n *Node) popChild() {
+	node := n.childNodes[len(n.childNodes)-1]
+	n.childNodes = n.childNodes[:len(n.childNodes)-1]
+	i := sort.Search(len(n.childNodesSorted), func(i int) bool {
+		return n.childNodesSorted[i].serial >= node.serial
+	})
+	if i >= len(n.childNodesSorted) {
+		panic("impossible")
+	}
+	n.childNodesSorted = append(
+		n.childNodesSorted[:i],
+		n.childNodesSorted[i+1:]...,
+	)
 }
