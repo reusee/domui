@@ -176,24 +176,18 @@ func (node *Node) ApplySpec(spec Spec) {
 }
 
 func (n *Node) appendChild(child *Node) {
-	n.childNodes = append(n.childNodes, child)
-	i := sort.Search(len(n.childNodesSorted), func(i int) bool {
-		return n.childNodesSorted[i].serial > child.serial
-	})
-	if i < len(n.childNodesSorted) {
-		newSlice := make([]*Node, 0, len(n.childNodesSorted)+1)
-		newSlice = append(newSlice, n.childNodesSorted[:i]...)
-		newSlice = append(newSlice, child)
-		newSlice = append(newSlice, n.childNodesSorted[i:]...)
-		n.childNodesSorted = newSlice
-	} else {
-		n.childNodesSorted = append(n.childNodesSorted, child)
-	}
+	n.insertChild(len(n.childNodes), child)
 }
 
 func (n *Node) insertChild(pos int, child *Node) {
-	n.childNodes = append(n.childNodes[:pos],
-		append([]*Node{child}, n.childNodes[pos:]...)...)
+	if l := len(n.childNodes); pos < l {
+		n.childNodes = append(n.childNodes[:pos],
+			append([]*Node{child}, n.childNodes[pos:]...)...)
+	} else if pos == l {
+		n.childNodes = append(n.childNodes, child)
+	} else {
+		panic("bad position")
+	}
 	i := sort.Search(len(n.childNodesSorted), func(i int) bool {
 		return n.childNodesSorted[i].serial > child.serial
 	})
@@ -209,12 +203,30 @@ func (n *Node) insertChild(pos int, child *Node) {
 }
 
 func (n *Node) popChild() {
-	node := n.childNodes[len(n.childNodes)-1]
-	n.childNodes = n.childNodes[:len(n.childNodes)-1]
+	n.deleteChild(len(n.childNodes) - 1)
+}
+
+func (n *Node) deleteChild(pos int) {
+	var deleted *Node
+	if l := len(n.childNodes); pos >= l {
+		panic("bad position")
+	} else if pos == l-1 {
+		deleted = n.childNodes[l-1]
+		n.childNodes = n.childNodes[:l-1]
+	} else {
+		deleted = n.childNodes[pos]
+		n.childNodes = append(
+			n.childNodes[:pos],
+			n.childNodes[:pos+1]...,
+		)
+	}
 	i := sort.Search(len(n.childNodesSorted), func(i int) bool {
-		return n.childNodesSorted[i].serial >= node.serial
+		return n.childNodesSorted[i].serial >= deleted.serial
 	})
 	if i >= len(n.childNodesSorted) {
+		panic("impossible")
+	}
+	if n.childNodesSorted[i].serial != deleted.serial {
 		panic("impossible")
 	}
 	n.childNodesSorted = append(
@@ -224,15 +236,15 @@ func (n *Node) popChild() {
 }
 
 func (n *Node) replaceChild(pos int, child *Node) {
-	old := n.childNodes[pos]
+	deleted := n.childNodes[pos]
 	n.childNodes[pos] = child
 	i := sort.Search(len(n.childNodesSorted), func(i int) bool {
-		return n.childNodesSorted[i].serial >= old.serial
+		return n.childNodesSorted[i].serial >= deleted.serial
 	})
 	if i >= len(n.childNodesSorted) {
 		panic("impossible")
 	}
-	if n.childNodesSorted[i].serial != old.serial {
+	if n.childNodesSorted[i].serial != deleted.serial {
 		panic("impossible")
 	}
 	n.childNodesSorted = append(
