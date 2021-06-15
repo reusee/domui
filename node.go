@@ -222,3 +222,33 @@ func (n *Node) popChild() {
 		n.childNodesSorted[i+1:]...,
 	)
 }
+
+func (n *Node) replaceChild(pos int, child *Node) {
+	old := n.childNodes[pos]
+	n.childNodes[pos] = child
+	i := sort.Search(len(n.childNodesSorted), func(i int) bool {
+		return n.childNodesSorted[i].serial >= old.serial
+	})
+	if i >= len(n.childNodesSorted) {
+		panic("impossible")
+	}
+	if n.childNodesSorted[i].serial != old.serial {
+		panic("impossible")
+	}
+	n.childNodesSorted = append(
+		n.childNodesSorted[:i],
+		n.childNodesSorted[i+1:]...,
+	)
+	i = sort.Search(len(n.childNodesSorted), func(i int) bool {
+		return n.childNodesSorted[i].serial > child.serial
+	})
+	if i < len(n.childNodesSorted) {
+		newSlice := make([]*Node, 0, len(n.childNodesSorted)+1)
+		newSlice = append(newSlice, n.childNodesSorted[:i]...)
+		newSlice = append(newSlice, child)
+		newSlice = append(newSlice, n.childNodesSorted[i:]...)
+		n.childNodesSorted = newSlice
+	} else {
+		n.childNodesSorted = append(n.childNodesSorted, child)
+	}
+}
