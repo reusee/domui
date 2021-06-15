@@ -113,7 +113,6 @@ func patch(
 					lastNode.childNodes[i],
 				)
 				ce(err)
-				lastNode.replaceChild(i, childNode)
 			}
 
 		} else {
@@ -121,7 +120,6 @@ func patch(
 			childElement, err := childNode.ToElement(scope)
 			ce(err)
 			element.Call("appendChild", childElement)
-			lastNode.appendChild(childNode)
 		}
 
 	}
@@ -130,7 +128,6 @@ func patch(
 			lastChild := element.Get("lastChild")
 			lastChild.Call("remove")
 			unsetEventSpecs(lastChild)
-			lastNode.popChild()
 		}
 	}
 
