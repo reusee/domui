@@ -269,26 +269,28 @@ func TestPatchingChildNodes(t *testing.T) {
 	WithTestApp(
 		t,
 		func(app *App) {
-			for i := 0; i < 32; i++ {
-				app.mutate(func() []int {
-					return rand.Perm(32)
-				})
-				app.Render()
+			for i := 0; i < 64; i++ {
 				var s string
+				app.getScope().Assign(&s)
+				app.mutate(func() []int {
+					return rand.Perm(rand.Intn(3) + 1)
+				})
+				app.getScope().Assign(&s)
+				app.Render()
 				app.getScope().Assign(&s)
 				text := app.element.Get("innerText").String()
 				if text != s {
-					t.Fatal()
+					t.Fatalf("\n%s expected\n%s got", s, text)
 				}
 			}
 		},
 		func() []int {
-			return rand.Perm(32)
+			return rand.Perm(rand.Intn(3) + 1)
 		},
 		func(list []int) string {
 			var b strings.Builder
 			for _, i := range list {
-				b.WriteString(fmt.Sprintf("%d", i))
+				b.WriteString(fmt.Sprintf("%d,", i))
 			}
 			return b.String()
 		},
@@ -296,7 +298,7 @@ func TestPatchingChildNodes(t *testing.T) {
 			m := NewSpecMap()
 			return func(i int) Spec {
 				return m(i, func() Spec {
-					return Text("%d", i)
+					return Text("%d,", i)
 				})
 			}
 		},

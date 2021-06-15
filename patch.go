@@ -2,7 +2,6 @@ package domui
 
 import (
 	"strings"
-	"sync/atomic"
 	"syscall/js"
 )
 
@@ -103,10 +102,7 @@ func patch(
 					childElement,
 					elementChildren.Index(i),
 				)
-				// insert placeholder
-				lastNode.appendChild(&Node{
-					serial: atomic.AddInt64(&nodeSerial, 1),
-				})
+				lastNode.insertChild(i, childNode)
 
 			} else {
 				// replace
@@ -117,6 +113,7 @@ func patch(
 					lastNode.childNodes[i],
 				)
 				ce(err)
+				lastNode.replaceChild(i, childNode)
 			}
 
 		} else {
@@ -124,6 +121,7 @@ func patch(
 			childElement, err := childNode.ToElement(scope)
 			ce(err)
 			element.Call("appendChild", childElement)
+			lastNode.appendChild(childNode)
 		}
 
 	}
