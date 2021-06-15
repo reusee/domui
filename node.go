@@ -40,7 +40,6 @@ func (n *Node) ToElement(scope Scope) (_ js.Value, err error) {
 			n.Text,
 		)
 
-		// child nodes may contain specs, handle first
 		if len(n.childNodes) > 0 {
 			fragment := document.Call("createDocumentFragment")
 			for _, childNode := range n.childNodes {

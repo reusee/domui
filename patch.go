@@ -70,9 +70,8 @@ func patch(
 	// patchable
 	element = lastElement
 
-	//TODO match childNodes and lastChildNodes
+	//TODO reuse nodes by pointer comparison
 	// children
-	// child nodes may contains specs, handle first
 	elementChildren := element.Get("childNodes")
 	childNodes := node.childNodes
 	lastChildNodes := lastNode.childNodes
