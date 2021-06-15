@@ -26,6 +26,8 @@ please read [the official wiki](https://github.com/golang/go/wiki/WebAssembly)
   + [DOM element specifications](#dom)
   + [Parameterized element](#parameterized)
   + [Miscellaneous usages](#misc)
+* [Additional topics](#additional)
+  + [Differences between DomUI and reactjs](#reactjs)
 
 <a name="tutorial" />
 
@@ -451,4 +453,20 @@ func (_ Def) List() List {
   }
 }
 ```
+
+<a name="additional" />
+
+## Additional topics
+
+<a name="reactjs" />
+
+### Differences between DomUI and reactjs
+
+In react, UI components are declared as classes or functions, and there may be multiple instances of the same class.
+All component instances form the component tree.
+In addition to the component tree, a state tree or other state management scheme may be used to hold non-UI data.
+
+In DomUI, all UI and non-UI components are defined as type/value pairs.
+UI components are just Spec types or function types that returning Spec.
+This unification greatly reduces the complexity of nearly everything compared to other MVVM frameworks.
 
