@@ -106,7 +106,7 @@ func (_ Def) Greetings() Greetings {
 	return "Hello, world!"
 }
 
-// An UI element
+// A UI element
 type GreetingsElement Spec
 
 // define GreetingsElement
