@@ -1,6 +1,9 @@
 package domui
 
 import (
+	"fmt"
+	"math/rand"
+	"strings"
 	"testing"
 )
 
@@ -260,4 +263,52 @@ func TestPatch(t *testing.T) {
 		)
 	})
 
+}
+
+func TestPatchingChildNodes(t *testing.T) {
+	WithTestApp(
+		t,
+		func(app *App) {
+			for i := 0; i < 32; i++ {
+				app.mutate(func() []int {
+					return rand.Perm(32)
+				})
+				app.Render()
+				var s string
+				app.getScope().Assign(&s)
+				text := app.element.Get("innerText").String()
+				if text != s {
+					t.Fatal()
+				}
+			}
+		},
+		func() []int {
+			return rand.Perm(32)
+		},
+		func(list []int) string {
+			var b strings.Builder
+			for _, i := range list {
+				b.WriteString(fmt.Sprintf("%d", i))
+			}
+			return b.String()
+		},
+		func() func(int) Spec {
+			m := NewSpecMap()
+			return func(i int) Spec {
+				return m(i, func() Spec {
+					return Text("%d", i)
+				})
+			}
+		},
+		func(
+			list []int,
+			fn func(int) Spec,
+		) RootElement {
+			var specs Specs
+			for _, i := range list {
+				specs = append(specs, fn(i))
+			}
+			return Div(specs)
+		},
+	)
 }
