@@ -3,7 +3,6 @@ package domui
 import (
 	"fmt"
 	"reflect"
-	"sort"
 	"syscall/js"
 )
 
@@ -14,24 +13,18 @@ const (
 	TextNode
 )
 
-var (
-	nodeSerial int64
-)
-
 type Node struct {
-	serial           int64
-	Kind             NodeKind
-	Text             string
-	ID               string
-	Style            string
-	Styles           SortedMap // string: string
-	Classes          SortedMap // string: struct{}
-	Attributes       SortedMap // string: any
-	Events           map[string][]EventSpec
-	childNodes       []*Node
-	childNodesSorted []*Node
-	Focus            bool
-	args             []reflect.Value
+	Kind       NodeKind
+	Text       string
+	ID         string
+	Style      string
+	Styles     SortedMap // string: string
+	Classes    SortedMap // string: struct{}
+	Attributes SortedMap // string: any
+	Events     map[string][]EventSpec
+	childNodes []*Node
+	Focus      bool
+	args       []reflect.Value
 }
 
 func (_ *Node) IsSpec() {}
@@ -155,7 +148,7 @@ func (node *Node) ApplySpec(spec Spec) {
 		)
 
 	case *Node:
-		node.appendChild(spec)
+		node.childNodes = append(node.childNodes, spec)
 
 	case Specs:
 		for _, s := range spec {
@@ -172,95 +165,5 @@ func (node *Node) ApplySpec(spec Spec) {
 	default:
 		panic(fmt.Errorf("unknown spec: %#v", spec))
 
-	}
-}
-
-func (n *Node) appendChild(child *Node) {
-	n.insertChild(len(n.childNodes), child)
-}
-
-func (n *Node) insertChild(pos int, child *Node) {
-	if l := len(n.childNodes); pos < l {
-		n.childNodes = append(n.childNodes[:pos],
-			append([]*Node{child}, n.childNodes[pos:]...)...)
-	} else if pos == l {
-		n.childNodes = append(n.childNodes, child)
-	} else {
-		panic("bad position")
-	}
-	i := sort.Search(len(n.childNodesSorted), func(i int) bool {
-		return n.childNodesSorted[i].serial > child.serial
-	})
-	if i < len(n.childNodesSorted) {
-		newSlice := make([]*Node, 0, len(n.childNodesSorted)+1)
-		newSlice = append(newSlice, n.childNodesSorted[:i]...)
-		newSlice = append(newSlice, child)
-		newSlice = append(newSlice, n.childNodesSorted[i:]...)
-		n.childNodesSorted = newSlice
-	} else {
-		n.childNodesSorted = append(n.childNodesSorted, child)
-	}
-}
-
-func (n *Node) popChild() {
-	n.deleteChild(len(n.childNodes) - 1)
-}
-
-func (n *Node) deleteChild(pos int) {
-	var deleted *Node
-	if l := len(n.childNodes); pos >= l {
-		panic("bad position")
-	} else if pos == l-1 {
-		deleted = n.childNodes[l-1]
-		n.childNodes = n.childNodes[:l-1]
-	} else {
-		deleted = n.childNodes[pos]
-		n.childNodes = append(
-			n.childNodes[:pos],
-			n.childNodes[:pos+1]...,
-		)
-	}
-	i := sort.Search(len(n.childNodesSorted), func(i int) bool {
-		return n.childNodesSorted[i].serial >= deleted.serial
-	})
-	if i >= len(n.childNodesSorted) {
-		panic("impossible")
-	}
-	if n.childNodesSorted[i].serial != deleted.serial {
-		panic("impossible")
-	}
-	n.childNodesSorted = append(
-		n.childNodesSorted[:i],
-		n.childNodesSorted[i+1:]...,
-	)
-}
-
-func (n *Node) replaceChild(pos int, child *Node) {
-	deleted := n.childNodes[pos]
-	n.childNodes[pos] = child
-	i := sort.Search(len(n.childNodesSorted), func(i int) bool {
-		return n.childNodesSorted[i].serial >= deleted.serial
-	})
-	if i >= len(n.childNodesSorted) {
-		panic("impossible")
-	}
-	if n.childNodesSorted[i].serial != deleted.serial {
-		panic("impossible")
-	}
-	n.childNodesSorted = append(
-		n.childNodesSorted[:i],
-		n.childNodesSorted[i+1:]...,
-	)
-	i = sort.Search(len(n.childNodesSorted), func(i int) bool {
-		return n.childNodesSorted[i].serial > child.serial
-	})
-	if i < len(n.childNodesSorted) {
-		newSlice := make([]*Node, 0, len(n.childNodesSorted)+1)
-		newSlice = append(newSlice, n.childNodesSorted[:i]...)
-		newSlice = append(newSlice, child)
-		newSlice = append(newSlice, n.childNodesSorted[i:]...)
-		n.childNodesSorted = newSlice
-	} else {
-		n.childNodesSorted = append(n.childNodesSorted, child)
 	}
 }

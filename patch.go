@@ -102,7 +102,11 @@ func patch(
 					childElement,
 					elementChildren.Index(i),
 				)
-				lastNode.insertChild(i, childNode)
+				// placeholder
+				lastNode.childNodes = append(
+					lastNode.childNodes[:i],
+					append([]*Node{nil}, lastNode.childNodes[i:]...)...,
+				)
 
 			} else {
 				// replace

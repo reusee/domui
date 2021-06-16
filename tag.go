@@ -1,16 +1,14 @@
 package domui
 
 import (
-	"sync/atomic"
 	"syscall/js"
 )
 
 func Tag(name string) func(specs ...Spec) *Node {
 	return func(specs ...Spec) *Node {
 		node := &Node{
-			serial: atomic.AddInt64(&nodeSerial, 1),
-			Kind:   TagNode,
-			Text:   name,
+			Kind: TagNode,
+			Text: name,
 		}
 
 		for _, spec := range specs {
