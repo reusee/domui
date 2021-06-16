@@ -1,6 +1,10 @@
 package domui
 
-import "fmt"
+import (
+	"fmt"
+	"math/rand"
+	"time"
+)
 
 var (
 	Div      = Tag("div")
@@ -10,3 +14,7 @@ var (
 
 	pt = fmt.Printf
 )
+
+func init() {
+	rand.Seed(time.Now().UnixNano())
+}
