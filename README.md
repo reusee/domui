@@ -1,4 +1,5 @@
-domui: DOM UI framework for Go
+# Domui
+A DOM UI framework for Go
 
 ## Features
 
