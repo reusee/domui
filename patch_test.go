@@ -273,7 +273,8 @@ func TestPatchingChildNodes(t *testing.T) {
 				var s string
 				app.getScope().Assign(&s)
 				app.mutate(func() []int {
-					return rand.Perm(rand.Intn(3) + 1)
+					return append(rand.Perm(rand.Intn(8)+1),
+						rand.Perm(rand.Intn(8)+1)...)
 				})
 				app.getScope().Assign(&s)
 				app.Render()
@@ -285,7 +286,9 @@ func TestPatchingChildNodes(t *testing.T) {
 			}
 		},
 		func() []int {
-			return rand.Perm(rand.Intn(3) + 1)
+			return append(
+				rand.Perm(rand.Intn(8)+1),
+				rand.Perm(rand.Intn(8)+1)...)
 		},
 		func(list []int) string {
 			var b strings.Builder
