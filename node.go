@@ -148,7 +148,9 @@ func (node *Node) ApplySpec(spec Spec) {
 		)
 
 	case *Node:
-		node.childNodes = append(node.childNodes, spec)
+		if spec != nil {
+			node.childNodes = append(node.childNodes, spec)
+		}
 
 	case Specs:
 		for _, s := range spec {
