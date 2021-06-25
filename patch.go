@@ -70,9 +70,10 @@ func patch(
 	// patchable
 	element = lastElement
 
-	//TODO reuse nodes by pointer comparison
-	// children
+	// child nodes
 	elementChildren := element.Get("childNodes")
+	childNodes := node.childNodes
+	lastChildNodes := lastNode.childNodes
 	hasFocus := false
 	for node := document.Get("activeElement"); !node.IsNull() && !node.IsUndefined() && !node.Equal(body); node = node.Get("parentNode") {
 		if node.Equal(element) {
@@ -80,8 +81,8 @@ func patch(
 			break
 		}
 	}
-	for i, childNode := range node.childNodes {
-		if i < len(lastNode.childNodes) {
+	for i, childNode := range childNodes {
+		if i < len(lastChildNodes) {
 
 			childElement := elementChildren.Index(i)
 			hasScrollBar := false
@@ -93,7 +94,7 @@ func patch(
 			}
 
 			if !hasFocus && !hasScrollBar &&
-				len(lastNode.childNodes) < len(node.childNodes) {
+				len(lastChildNodes) < len(childNodes) {
 				// insert
 				childElement, err := childNode.ToElement(scope)
 				ce(err)
@@ -102,11 +103,10 @@ func patch(
 					childElement,
 					elementChildren.Index(i),
 				)
-				// placeholder
-				lastNode.childNodes = append(
-					lastNode.childNodes[:i],
-					append([]*Node{nil}, lastNode.childNodes[i:]...)...,
-				)
+				lastChildNodes = append(
+					lastChildNodes[:i],
+					append([]*Node{nil}, lastChildNodes[i:]...)...,
+				) // insert placeholder
 
 			} else {
 				// replace
@@ -114,7 +114,7 @@ func patch(
 					scope,
 					childNode,
 					childElement,
-					lastNode.childNodes[i],
+					lastChildNodes[i],
 				)
 				ce(err)
 			}
@@ -127,7 +127,7 @@ func patch(
 		}
 
 	}
-	if n := len(lastNode.childNodes) - len(node.childNodes); n > 0 {
+	if n := len(lastChildNodes) - len(childNodes); n > 0 {
 		for i := 0; i < n; i++ {
 			lastChild := element.Get("lastChild")
 			lastChild.Call("remove")
