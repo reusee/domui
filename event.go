@@ -96,8 +96,8 @@ func setEventSpecs(wrap js.Value, element js.Value, specs map[string][]EventSpec
 	}
 
 	eventRegistryLock.Lock()
-	defer eventRegistryLock.Unlock()
 	eventRegistry[id] = specs
+	eventRegistryLock.Unlock()
 
 }
 
@@ -110,8 +110,8 @@ func unsetEventSpecs(element js.Value) {
 		id = int32(idValue.Int())
 	}
 	eventRegistryLock.Lock()
-	defer eventRegistryLock.Unlock()
 	eventRegistry[id] = nil
+	eventRegistryLock.Unlock()
 	childNodes := element.Get("childNodes")
 	for i := childNodes.Length() - 1; i >= 0; i-- {
 		unsetEventSpecs(childNodes.Index(i))
