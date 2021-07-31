@@ -99,18 +99,26 @@ func (a *App) Update(decls ...any) Scope {
 
 var rootElementType = reflect.TypeOf((*RootElement)(nil)).Elem()
 
+type SlowRenderThreshold time.Duration
+
+func (_ Def) SlowRenderThreshold() SlowRenderThreshold {
+	return SlowRenderThreshold(time.Millisecond) * 50
+}
+
 func (a *App) Render() {
 	t0 := time.Now()
+	var slowThreshold SlowRenderThreshold
 	defer func() {
 		e := time.Since(t0)
-		if e > time.Millisecond*100 {
+		if e > time.Duration(slowThreshold) {
 			log("slow render in %v", time.Since(t0))
 		}
 	}()
 	scope := a.getScope()
-	v, err := scope.Get(rootElementType)
-	ce(err)
-	newNode := v.Interface().(*Node)
+	var rootElement RootElement
+	scope.Assign(&slowThreshold, &rootElement)
+	newNode := rootElement.(*Node)
+	var err error
 	a.element, err = patch(scope, newNode, a.element, a.rootNode)
 	ce(err)
 	a.rootNode = newNode
