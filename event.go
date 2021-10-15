@@ -76,7 +76,7 @@ func setEventSpecs(wrap js.Value, element js.Value, specs map[string][]EventSpec
 							}
 							eventRegistryLock.RUnlock()
 							for _, spec := range specs {
-								eventHandlerScope.Sub(
+								eventHandlerScope.Fork(
 									func() js.Value {
 										return node
 									},
