@@ -251,7 +251,7 @@ func TestPatch(t *testing.T) {
 			func(n int) RootElement {
 				var children Specs
 				for i := 0; i < n; i++ {
-					children = append(children, P(Text(sp("%d", i))))
+					children = append(children, P(Text("%d", i)))
 				}
 				return Div(
 					children...,
