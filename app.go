@@ -13,8 +13,7 @@ type RootElement Spec
 type App struct {
 	wrapElement js.Value
 	element     js.Value
-	getScope    dscope.GetScope
-	mutate      dscope.Mutate
+	scope       dscope.Scope
 	dirty       chan struct{}
 	rootNode    *Node
 	fns         chan any
@@ -30,7 +29,7 @@ func NewApp(
 		fns:   make(chan any),
 	}
 
-	scope := dscope.NewMutable(
+	app.scope = dscope.New(
 		func() Update {
 			return app.Update
 		},
@@ -38,15 +37,11 @@ func NewApp(
 			return app
 		},
 	)
-	scope.Assign(&app.getScope, &app.mutate)
 
 	defs = append(defs, dscope.Methods(new(Def))...)
-	app.mutate(defs...)
+	app.scope = app.scope.Fork(defs...)
 
-	var onInit OnAppInit
-	app.getScope().Assign(&onInit)
-
-	onInit()
+	dscope.Get[OnAppInit](app.scope)()
 
 	parentElement := js.Value(renderElement)
 	parentElement.Set("innerHTML", "")
@@ -65,7 +60,7 @@ func NewApp(
 				app.Render()
 
 			case fn := <-app.fns:
-				app.getScope().Call(fn)
+				app.scope.Call(fn)
 
 			}
 		}
@@ -80,21 +75,19 @@ type OnAppInit func()
 
 var _ dscope.Reducer = OnAppInit(nil)
 
-func (_ OnAppInit) Reduce(_ Scope, vs []reflect.Value) reflect.Value {
-	return dscope.Reduce(vs)
+func (_ OnAppInit) IsReducer() {
 }
 
 func (_ Def) OnAppInit() OnAppInit {
 	return func() {}
 }
 
-func (a *App) Update(decls ...any) Scope {
-	scope := a.mutate(decls...)
+func (a *App) Update(decls ...any) {
+	a.scope = a.scope.Fork(decls...)
 	select {
 	case a.dirty <- struct{}{}:
 	default:
 	}
-	return scope
 }
 
 var rootElementType = reflect.TypeOf((*RootElement)(nil)).Elem()
@@ -114,12 +107,11 @@ func (a *App) Render() {
 			log("slow render in %v", time.Since(t0))
 		}
 	}()
-	scope := a.getScope()
 	var rootElement RootElement
-	scope.Assign(&slowThreshold, &rootElement)
+	a.scope.Assign(&slowThreshold, &rootElement)
 	newNode := rootElement.(*Node)
 	var err error
-	a.element, err = patch(scope, newNode, a.element, a.rootNode)
+	a.element, err = patch(a.scope, newNode, a.element, a.rootNode)
 	ce(err)
 	a.rootNode = newNode
 }
