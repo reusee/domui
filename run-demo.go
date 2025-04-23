@@ -1,15 +1,20 @@
-// +build ignore
+//go:build ignore
 
 package main
 
 import (
+	_ "embed"
 	"fmt"
+	"io"
 	"net/http"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"strings"
 )
+
+//go:embed wasm_exec.js
+var wasm_exec_js string
 
 var pt = fmt.Printf
 
@@ -35,13 +40,16 @@ func main() {
 
 	dirFS := os.DirFS(".")
 	http.Handle("/", http.FileServer(http.FS(dirFS)))
+	http.HandleFunc("/wasm_exec.js", func(w http.ResponseWriter, req *http.Request) {
+		io.WriteString(w, wasm_exec_js)
+	})
 	http.HandleFunc("/demo.html", func(w http.ResponseWriter, req *http.Request) {
 		w.Write([]byte(`
 <!DOCTYPE html>
 <html>
   <head>
     <meta charset="UTF-8">
-    <script src="wasm_exec.js"></script>
+    <script src="/wasm_exec.js"></script>
   </head>
   <body>
     <div id="app"></div>
