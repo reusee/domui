@@ -1,8 +1,10 @@
 module github.com/reusee/domui
 
-go 1.16
+go 1.24
 
 require (
-	github.com/reusee/dscope v0.0.0-20211211131040-a9377a7262cb
-	github.com/reusee/e4 v0.0.0-20211111112921-a1e3637d4313
+	github.com/reusee/dscope v0.0.0-20250424063202-aac1644688bb
+	github.com/reusee/e5 v0.0.0-20230610121337-9deb1a7b70ae
 )
+
+require github.com/reusee/pr3 v0.0.0-20231127041243-c2b238a94b9a // indirect

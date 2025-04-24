@@ -250,7 +250,7 @@ func TestPatch(t *testing.T) {
 			},
 			func(n int) RootElement {
 				var children Specs
-				for i := 0; i < n; i++ {
+				for i := range n {
 					children = append(children, P(Text("%d", i)))
 				}
 				return Div(
@@ -269,16 +269,16 @@ func TestPatchingChildNodes(t *testing.T) {
 	WithTestApp(
 		t,
 		func(app *App) {
-			for i := 0; i < 64; i++ {
+			for range 64 {
 				var s string
-				app.getScope().Assign(&s)
-				app.mutate(func() []int {
+				app.scope.Assign(&s)
+				app.Update(func() []int {
 					return append(rand.Perm(rand.Intn(8)+1),
 						rand.Perm(rand.Intn(8)+1)...)
 				})
-				app.getScope().Assign(&s)
+				app.scope.Assign(&s)
 				app.Render()
-				app.getScope().Assign(&s)
+				app.scope.Assign(&s)
 				text := app.element.Get("innerText").String()
 				if text != s {
 					t.Fatalf("\n%s expected\n%s got", s, text)

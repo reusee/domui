@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/reusee/dscope"
-	"github.com/reusee/e4"
+	"github.com/reusee/e5"
 )
 
 type (
@@ -14,14 +14,14 @@ type (
 )
 
 var (
-	ce = e4.Check.With(e4.DropFrame(func(frame e4.Frame) bool {
+	ce = e5.Check.With(e5.DropFrame(func(frame e5.Frame) bool {
 		switch frame.Pkg {
 		case "dscope", "runtime", "reflect":
 			return true
 		}
 		return false
 	}))
-	he = e4.Handle
+	he = e5.Handle
 	sp = fmt.Sprintf
 
 	Methods = dscope.Methods
